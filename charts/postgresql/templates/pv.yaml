@@ -1,0 +1,21 @@
+{{- if and .Values.persistence.enabled (not .Values.persistence.existingClaim) }}
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-{{ template "postgresql.name" . }}-data
+  labels:
+    app: {{ template "postgresql.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+spec:
+  capacity:
+    storage: {{ .Values.persistence.size }}
+  storageClassName: {{ .Values.persistence.storageClassName | quote }}
+  azureDisk:
+    kind: {{ .Values.azureDisk.kind | quote }}
+    diskName: {{ .Values.azureDisk.diskName | quote }}
+    diskURI: {{ .Values.azureDisk.diskURI | quote }}
+  accessModes:
+    - {{ .Values.persistence.accessMode | quote }}
+{{- end }}
